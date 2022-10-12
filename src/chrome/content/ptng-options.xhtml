@@ -2,12 +2,18 @@
 <!DOCTYPE dialog [
 <!ENTITY % mainDTD SYSTEM "chrome://printingtoolsng/locale/printingtoolsng.dtd">
 %mainDTD;
+<!ENTITY % messengerDTD SYSTEM "chrome://messenger/locale/importDialog.dtd">%messengerDTD;
 ]>
-<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!-- <?xml-stylesheet href="chrome://global/skin/" type="text/css"?> -->
+<!-- <?xml-stylesheet type="text/css" href="chrome://global/skin/in-content/common.css"?> -->
+<?xml-stylesheet type="text/css" href="chrome://messenger/skin/icons.css"?>
+<?xml-stylesheet type="text/css" href="chrome://messenger/skin/colors.css"?>
+
 <?xml-stylesheet type="text/css" href="chrome://messenger/skin/messenger.css"?>
-<?xml-stylesheet type="text/css" href="chrome://messenger/skin/input-fields.css"?>
+<!-- <?xml-stylesheet type="text/css" href="chrome://messenger/skin/input-fields.css"?> -->
+<?xml-stylesheet type="text/css" href="chrome://messenger/skin/themeableDialog.css"?>
 <?xml-stylesheet type="text/css" href="chrome://printingtoolsng/content/ptng-options.css"?>
-<dialog id="ptng-options"
+<window id="ptng-options"
 		xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 		xmlns:html="http://www.w3.org/1999/xhtml"
         title="PrintingTools NG ">
@@ -24,7 +30,7 @@
 		</tabs>
 		<tabpanels id="tabs">
 			<tabpanel orient="vertical">
-				<html:fieldset>
+				<html:fieldset class="groupbox-multi-os">
 					<spacer height="6px" />
 					<caption label="&PMDcaptionlabel;" />
 					<hbox align="center" padding-left="-8px">
@@ -128,8 +134,8 @@
 				</html:fieldset>
 			</tabpanel>
 			<tabpanel orient="vertical">
-				<html:fieldset>
-					<html:legend style="font-weight: 500; margin: 8px 6px 8px 6px;  padding-left: 6px; background-color: white">&headers;</html:legend>
+				<html:fieldset class="groupbox-multi-os">
+					<html:legend style="font-weight: 500; margin: 8px 6px 8px 6px;  padding-left: 6px;" >&headers;</html:legend>
 					<vbox align="start" style="padding-left: 10px">
 						<checkbox id="alignHeaders" label="&alignHeaders.label;"  />
 						<hbox align="center">
@@ -181,8 +187,8 @@
 					</vbox>
 				</html:fieldset>
 				<spacer height="6px"/>
-				<html:fieldset>
-					<html:legend style="font-weight: 500; margin: 8px; background-color: white">&messageBody;</html:legend>
+				<html:fieldset class="groupbox-multi-os">
+					<html:legend style="font-weight: 500; margin: 8px;">&messageBody;</html:legend>
 					<vbox align="start" style="padding-left: 10px">
 					<hbox>
 							<checkbox id="PREtruncate" label="&maxPreLen;" />
@@ -357,4 +363,11 @@
 			</tabpanel>
 		</tabpanels>
 	</tabbox>
-</dialog>
+	<vbox height="8px"></vbox>
+		<hbox align="right">
+			<spacer flex="1"/>
+			<button id="localfolder.btQuitter" label="Cancel" oncommand="window.close();"/>
+			<button id="localfolder.btValider" label="Ok" oncommand=""/>
+		</hbox>
+	
+</window>

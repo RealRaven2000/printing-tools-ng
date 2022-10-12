@@ -116,7 +116,8 @@ var printingtools = {
 		//console.log(gFolderDisplay.selectedMessage)
 		//console.log(gMessageDisplay.displayedMessage)
 
-		if (gFolderDisplay.selectedCount == 1 && options.printSilent == false) {
+		//if (gFolderDisplay.selectedCount == 1 && options.printSilent == false) {
+			if (gFolderDisplay.selectedCount == 1 ) {
 			if (1 &&
 				gMessageDisplay.visible &&
 				gFolderDisplay.selectedMessage == gMessageDisplay.displayedMessage
@@ -263,7 +264,8 @@ var printingtools = {
 					//console.log("print sel")
 					PrintUtils.startPrintWindow(messagePaneBrowser.browsingContext, { printSelectionOnly: true });
 				} else {
-					//console.log("print no sel")
+					console.log("Start print call")
+					console.log("Start print win")
 					PrintUtils.startPrintWindow(messagePaneBrowser.browsingContext, { printSelectionOnly: false });
 				}
 
@@ -357,7 +359,7 @@ var printingtools = {
 		console.log(typeMsg)
 		// Multiple messages. Get the printer settings, then load the messages into
 		// a hidden browser and print them one at a time.
-		let ps = PrintUtils.getPrintSettings();
+		let printSettings = PrintUtils.getPrintSettings();
 
 		if (options.printSilent == false) {
 			
@@ -372,15 +374,28 @@ var printingtools = {
 			}
 		}
 
-		ps.printSilent = true;
+		printSettings.isInitializedFromPrinter = true;
+		printSettings.isInitializedFromPrefs = true;
+		
+		printSettings.printerName = PrintUtils.SAVE_TO_PDF_PRINTER;
+		printSettings.printSilent = false;
+        printSettings.outputFormat = Ci.nsIPrintSettings.kOutputFormatPDF;
+
 
 		for (let uri of printingtools.msgUris) {
 			let messageService = messenger.messageServiceFromURI(uri);
+			let aMsgHdr = messageService.messageURIToMsgHdr(uri);
+			let filePath = "C:\\Dev\\ptest"
+			//filePath = "/home"
+			let fileName = aMsgHdr.mime2DecodedSubject + ".pdf";
+			console.log(fileName)
+			printSettings.toFileName = PathUtils.join(filePath, fileName);
 
+			console.log(printSettings)
 			if (!PrintUtils.printBrowser) {
 				console.log("no p brows")
 				let messagePaneBrowser = document.getElementById("messagepane");
-				messagePaneBrowser.browsingContext.print(ps);
+				messagePaneBrowser.browsingContext.print(printSettings);
 			} else {
 				console.log("use pb print")
 				await PrintUtils.loadPrintBrowser("chrome://printingtoolsng/content/test.html");
@@ -389,7 +404,8 @@ var printingtools = {
 				printingtools.previewDoc = PrintUtils.printBrowser.contentDocument
 				await printingtools.reformatLayout();
 
-				await PrintUtils.printBrowser.browsingContext.print(ps);
+				
+				await PrintUtils.printBrowser.browsingContext.print(printSettings);
 			}
 		}
 	},
