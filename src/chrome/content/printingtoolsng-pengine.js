@@ -361,6 +361,7 @@ var printingtools = {
 		// a hidden browser and print them one at a time.
 		let printSettings = PrintUtils.getPrintSettings();
 
+		//PrintUtils.prototype.test = function () {console.debug("test")};
 		if (options.printSilent == false) {
 			
 			try {
@@ -381,15 +382,18 @@ var printingtools = {
 		printSettings.printSilent = false;
         printSettings.outputFormat = Ci.nsIPrintSettings.kOutputFormatPDF;
 
+		printSettings.pageRanges = [1, 1];
 
 		for (let uri of printingtools.msgUris) {
 			let messageService = messenger.messageServiceFromURI(uri);
 			let aMsgHdr = messageService.messageURIToMsgHdr(uri);
-			let filePath = "C:\\Dev\\ptest"
+			let filePath = "C:\\Dev\\ptest\\"
 			//filePath = "/home"
 			let fileName = aMsgHdr.mime2DecodedSubject + ".pdf";
 			console.log(fileName)
 			printSettings.toFileName = PathUtils.join(filePath, fileName);
+
+			printSettings.pageRanges = [1, 2];
 
 			console.log(printSettings)
 			if (!PrintUtils.printBrowser) {
