@@ -118,6 +118,57 @@ function onLoad() {
 
 	extMsgHandler = window.ptngAddon.notifyTools.addListener(handleExternalPrint);
 
+	console.log("observ")
+	window.printingtoolsng.printObserver = {
+	
+		async observe(subDialogWindow) {
+			// A subDialog has been opened.
+			console.log("subDialog opened: " + subDialogWindow.location.href);
+
+			// We only want to deal with the print subDialog.
+			if (!subDialogWindow.location.href.startsWith("chrome://global/content/print.html?")) {
+				return;
+			}
+
+
+			//Services.scriptloader.loadSubScript("chrome://printingtoolsng/content/printingtoolsng-pengine.js", subDialogWindow);
+
+			// subDialogWindow.printingtools.printT(subDialogWindow);
+			// let mw = subDialogWindow.printingtools.getMail3Pane();
+			// let ps = mw.document.documentElement.querySelector(".printPreviewStack print-preview browser");
+			// console.debug(ps);
+
+			// ps.addEventListener('DOMContentLoaded', (event) => {
+			// 	console.log('DOM fully loaded and parsed');
+			// });
+
+			// Wait until print-settings in the subDialog have been loaded/rendered.
+			await new Promise(resolve =>
+				subDialogWindow.document.addEventListener("print-settings", resolve, { once: true })
+			);
+
+			console.log("subDialog print-settings loaded");
+			console.log("subDialog print-settings caller/opener: " + subDialogWindow.PrintEventHandler.activeCurrentURI);
+
+			console.log(window.printingtools);
+			// setTimeout(subDialogWindow.printingtools.printT, 9000);
+
+			console.debug(subDialogWindow.document.documentElement.outerHTML);
+			let cr = subDialogWindow.document.querySelector("#custom-range");
+			let rp = subDialogWindow.document.querySelector("#range-picker");
+		
+			console.debug(rp);
+	
+			console.debug(cr);
+			rp.selectedIndex = 1;
+			cr.removeAttribute("hidden")
+			cr.value = "1-2"
+
+
+			},
+	};
+
+	Services.obs.addObserver(window.printingtoolsng.printObserver, "subdialog-loaded");
 
 }
 
@@ -139,4 +190,5 @@ function onUnload(shutdown) {
 	window.ptngAddon.notifyTools.removeListener(extMsgHandler);
 	window.getUI_status.shutdown();
 	window.printingtools.shutdown();
+	Services.obs.removeObserver(window.printingtoolsng.printObserver, "subdialog-loaded");
 }
