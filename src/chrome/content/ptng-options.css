@@ -11,6 +11,7 @@
 	--in-content-accent-color: rgb(69, 161, 255);
 	--list-item-hover: rgb(116, 183, 249);
 	--list-highlight-text-color: black;
+	--in-content-button-background: rgba(207, 207, 216, 0.33);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -65,7 +66,7 @@
 }
 
 input {
-	background-color: red !important;
+	background-color: var(--dialog-bgcolor)!important;
 }
 
 
@@ -168,3 +169,65 @@ width: 100%;
   
 }
 
+.margin-input {
+	width: 6em !important;
+}
+
+input[type="number"],
+input[type="text"] {
+  padding: 2px;
+  padding-inline-start: 8px;
+}
+
+input[type="number"].photon-number2 {
+	padding: 0px;
+	padding-inline-start: 8px;
+	margin: 0;
+	height: 1.5em;
+	width: 4em;
+	padding-left: 8px;
+	text-align: left;
+  }
+  
+  input[type="number"].photon-number2::-moz-number-spin-box {
+	height: 100%;
+	max-height: 100%;
+	border-inline-start: 1px solid var(--in-content-box-border-color);
+	width: 1em;
+	border-start-end-radius: 4px;
+	border-end-end-radius: 4px;
+  }
+  
+  input[type="number"].photon-number2:hover::-moz-number-spin-box {
+	border-color: var(--in-content-border-hover);
+  }
+  
+  input[type="number"].photon-number2::-moz-number-spin-up,
+  input[type="number"].photon-number2::-moz-number-spin-down {
+	border: 0;
+	border-radius: 0;
+	background-color: var(--in-content-button-background) !important;
+	background-image: url("chrome://global/skin/icons/arrow-down.svg");
+	background-size: 8px;
+	background-position: center;
+	-moz-context-properties: fill;
+	fill: currentColor;
+	appearance: none;
+  }
+  
+  input[type="number"].photon-number2::-moz-number-spin-up {
+	background-image: url("chrome://global/skin/icons/arrow-up.svg");
+  }
+  
+  input[type="number"].photon-number2::-moz-number-spin-up:hover,
+  input[type="number"].photon-number2::-moz-number-spin-down:hover {
+	background-color: var(--in-content-button-background-hover);
+	color: var(--in-content-button-text-color-hover);
+  }
+  
+  input[type="checkbox"]:disabled + label,
+  input[type="radio"]:disabled + label,
+  input[type="radio"]:disabled + span > label {
+	opacity: 0.5;
+  }
+  

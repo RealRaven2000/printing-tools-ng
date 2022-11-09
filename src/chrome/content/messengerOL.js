@@ -162,7 +162,7 @@ function onLoad() {
 			console.debug(cr);
 			rp.selectedIndex = 1;
 			cr.removeAttribute("hidden")
-			cr.value = "1-2"
+			cr.value = "1"
 
 
 			},

@@ -297,6 +297,8 @@
 				</hbox>
 			</tabpanel>
 			<tabpanel>
+
+			<html:div style= "height: 200px; overflow-y: scroll; background-color2: yellow">
 				<vbox>
 					<hbox align="center">
 						<html:label style="padding-left: 8px; padding-right: 4px;">&defaultPrinter;</html:label>
@@ -314,53 +316,88 @@
 						<label value="&debugOptions.label;: " />
 						<html:input type="text" id="debug-options" size="30" />
 					</hbox>
+
+					<spacer height="30px"/>
+
+					<hbox  height="24px">
+					
+					<label value="Copies: " style="width: 100px"/>
+					
+					<hbox width="200px" style="background-colorx: yellow">
+					<html:input id="copies-count" is="setting-number" data-setting-name="numCopies" min="1" max="10000" class="copy-count-input photon-number2" aria-errormessage="error-invalid-copies" required="" type="number" autocomplete="off" value="14"/>
+					</hbox>
+					</hbox >
+					<spacer height="10px"/>
+
+					<hbox  >
+						<label value="Page Ranges: " style="width: 100px"/>
+						<html:input type="text" id="pages" size="15" style="heightx: 24px; margin-left: 0px" />
+					</hbox>
+					<spacer height="8px"/>
+					<hbox  height="24px">
+						<label value="Left margin: " style="width: 100px"/>
+					<html:input id="margin-left" is="setting-number" data-setting-name="numCopies" min="1" max="10000" class="margin-input photon-number2" aria-errormessage="error-invalid-copies" required="" type="number" autocomplete="off" value="0.50"/>
+					</hbox>
+					<spacer height="4px"/>
+						<hbox  height="24px">
+						<label value="Right margin: " style="width: 100px"/>
+					<html:input id="margin-right" is="setting-number" data-setting-name="numCopies" min="1" max="10000" class="margin-input photon-number2" aria-errormessage="error-invalid-copies" required="" type="number" autocomplete="off" value="0.50"/>
+					</hbox>
+					<spacer height="4px"/>
+					<hbox  height="24px">
+						<label value="Top margin: " style="width: 100px"/>
+					<html:input id="margin-left" is="setting-number" data-setting-name="numCopies" min="1" max="10000" class="margin-input photon-number2" aria-errormessage="error-invalid-copies" required="" type="number" autocomplete="off" value="0.50"/>
+					</hbox>
+					<spacer height="4px"/>
+					<hbox  height="24px">
+						<label value="Bottom margin: " style="width: 100px"/>
+					<html:input id="margin-left" is="setting-number" data-setting-name="numCopies" min="1" max="10000" class="margin-input photon-number2" aria-errormessage="error-invalid-copies" required="" type="number" autocomplete="off" value="0.50"/>
+					</hbox>
+					<spacer height="6px"/>
+
+					<label value="Header" style="width: 100px"/>
+					<spacer height="6px"/>
+					<hbox  >
+						<label value="Left : " style="width: 100px"/>
+						<html:input type="text" id="pages" size="15" style="heightx: 24px; margin-left: 0px" />
+					</hbox>
+					<spacer height="6px"/>
+
+					<hbox  >
+						<label value="Center: " style="width: 100px"/>
+						<html:input type="text" id="pages" size="15" style="heightx: 24px; margin-left: 0px" />
+					</hbox>
+					<spacer height="4px"/>
+
+					<hbox  >
+						<label value="Right: " style="width: 100px"/>
+						<html:input type="text" id="pages" size="15" style="heightx: 24px; margin-left: 0px" />
+					</hbox>
+				<spacer height="6px"/>
+				<label value="Footer" style="width: 100px"/>
+					<spacer height="6px"/>
+					<hbox  >
+						<label value="Left : " style="width: 100px"/>
+						<html:input type="text" id="pages" size="15" style="heightx: 24px; margin-left: 0px" />
+					</hbox>
+					<spacer height="6px"/>
+
+					<hbox  >
+						<label value="Center: " style="width: 100px"/>
+						<html:input type="text" id="pages" size="15" style="heightx: 24px; margin-left: 0px" />
+					</hbox>
+					<spacer height="4px"/>
+
+					<hbox  >
+						<label value="Right: " style="width: 100px"/>
+						<html:input type="text" id="pages" size="15" style="heightx: 24px; margin-left: 0px" />
+					</hbox>
+
+					
 				</vbox>
+				</html:div>
 			</tabpanel>
-			<tabpanel>
-				<vbox>
-					<hbox align="center">
-						<checkbox id="PMDabsmallfont" label="&PMDlabel12;" />
-						<menulist id="ABfontsize">
-							<menupopup>
-								<menuitem label="8"/>
-								<menuitem label="9"/>
-								<menuitem label="10"/>
-								<menuitem label="11"/>
-								<menuitem label="12"/>
-								<menuitem label="13"/>
-								<menuitem label="14"/>
-								<menuitem label="15"/>
-								<menuitem label="16"/>
-								<menuitem label="17"/>
-								<menuitem label="18"/>
-							</menupopup>
-						</menulist>
-					</hbox>
-					<hbox>
-						<checkbox id="ABcustomFont" label="&PMDlabel18; " />
-						<menulist id="ABfontlist" style="width:200px"/>
-						<!-- <menulist id="fontlist2" style="width:200px"/> -->
-					</hbox>
-					<hbox align="center">
-						<checkbox id="PMDabnohead" label="&PMDlabel13;" prefstring="extensions.printingtoolsng.addressbook.hide_header_card"/>
-					</hbox>
-					<hbox align="center">
-						<checkbox id="PMDabjustaddress" label="&PMDlabel14;" prefstring="extensions.printingtoolsng.addressbook.print_just_addresses"/>
-					</hbox>
-					<hbox align="center">
-						<checkbox id="PMDabmaxcompact" label="&PMDlabel15;" />
-					</hbox>
-					<hbox align="center">
-						<checkbox id="PMDcutnotes" label="&PMDlabel19;" />
-					</hbox>
-					<hbox align="center">
-						<checkbox id="PMDaddname" label="&PMDlabel20;" />
-					</hbox>
-					<hbox align="center">
-						<checkbox id="multipleCards" label="&multipleCards.label;" />
-					</hbox>
-				</vbox>
-			</tabpanel>
+			
 		</tabpanels>
 	</tabbox>
 	<vbox height="8px"></vbox>

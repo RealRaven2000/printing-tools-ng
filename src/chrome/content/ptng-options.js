@@ -82,7 +82,7 @@ async function  initPMDpanel() {
 	}
 
 	fullPanel = true;
-	initPMDabpanel();
+	//initPMDabpanel();
 
 	var bundle = strBundleService.createBundle("chrome://printingtoolsng/locale/printingtoolsng.properties");
 
@@ -265,13 +265,19 @@ async function setPrinterList() {
 	var printers = await printerList.printers;
 	// var printers = [];
 	var i = 0;
+	var menuitem0 = document.createXULElement("menuitem");
+	menuitem0.setAttribute("value", "Mozilla Save to PDF");
+	menuitem0.setAttribute("label", "Save to PDF");
+	popup.appendChild(menuitem0);
+
 	// while(pe.hasMore()) {
+	console.log("get printers")
 	for (let printer of printers) {
 		printer.QueryInterface(Ci.nsIPrinter);
 		let printerName = printer.name;
 		var menuitem = document.createXULElement("menuitem");
 
-		// Services.console.logStringMessage("printingtools: printerName: " + printerName);
+		console.log("printingtools: printerName: " + printerName);
 		// printers.push(printerName);
 		menuitem.setAttribute("value", printerName);
 		menuitem.setAttribute("label", printerName);
