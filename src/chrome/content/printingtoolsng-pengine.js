@@ -5,6 +5,22 @@ var st = {};
 
 Services.scriptloader.loadSubScript("chrome://printingtoolsng/content/strftime.js", st);
 
+const defaultPTNGprinterSettings = {
+	numCopies: 1,
+	pageRanges: [1, 1],
+	marginTop: 0.5,
+	marginBottom: 0.5,
+	marginLeft: 0.5,
+	marginRight: 0.5,
+	headerStrLeft: "",
+	headerStrCenter: "&T",
+	headerStrRight: "",
+	footerStrLeft: "&PT",
+	footerStrCenter: "",
+	footerStrRight: "&D"
+};
+
+
 console.log("PTNG: Engine loaded")
 
 //dtest();
@@ -105,6 +121,79 @@ var printingtools = {
 	extRunning: false,
 	externalQ: [],
 	msgRestoration: {},
+
+	savePrinterSettingsFromPTNGsettings: function () {
+		var w = Cc["@mozilla.org/appshell/window-mediator;1"]
+		.getService(Ci.nsIWindowMediator)
+		.getMostRecentWindow("mail:3pane");
+		printSettings = w.PrintUtils.getPrintSettings();
+	
+		console.log(printSettings)
+		
+		let printerName = printSettings.printerName;
+		let printerNameEsc = printerName.replace(/ /g, '_');
+		let p = `extensions.printingtoolsng.printer.${printerNameEsc}`;
+		console.log(p)
+		let t = printingtools.prefs.getPrefType(`extensions.printingtoolsng.printer.${printerNameEsc}`)
+		console.log(t)
+		var props;
+		var customProps;
+	
+		if(t > 0) {
+			printSettings =  this.setPrinterSettingsFromPTNGsettings(printSettings)
+			
+			console.log(printSettings)
+	
+		} else {
+			this.initCustomPrinterOptions(printerName);
+			printSettings =  this.setPrinterSettingsFromPTNGsettings(printSettings)
+		}
+		var PSSVC = Cc["@mozilla.org/gfx/printsettings-service;1"]
+			.getService(Ci.nsIPrintSettingsService);
+		PSSVC.savePrintSettingsToPrefs(printSettings, true, Ci.nsIPrintSettings.kInitSaveAll)
+	  },
+
+
+	  initCustomPrinterOptions: function (printerName) {
+		let printerNameEsc = printerName.replace(/ /g, '_');
+		let p = `extensions.printingtoolsng.printer.${printerNameEsc}`;
+		console.log(p)
+		let t = printingtools.prefs.getPrefType(`extensions.printingtoolsng.printer.${printerNameEsc}`)
+		console.log(t)
+		var props;
+	
+		if(t == 0) {
+			let customProps = defaultPTNGprinterSettings;
+			let customPropsStr = JSON.stringify(customProps);
+			printingtools.prefs.setStringPref(p, customPropsStr);
+			
+		}
+	
+	},
+	
+	setPrinterSettingsFromPTNGsettings: function (printerSettings) {
+		let printerNameEsc = printerSettings.printerName.replace(/ /g, '_');
+		let p = `extensions.printingtoolsng.printer.${printerNameEsc}`;
+		let t = printingtools.prefs.getPrefType(`extensions.printingtoolsng.printer.${printerNameEsc}`)
+	
+		if (t == 0) {
+			this.initCustomPrinterOptions(printerSettings.printerName);
+		}
+	
+		let props = printingtools.prefs.getStringPref(`extensions.printingtoolsng.printer.${printerNameEsc}`);
+		var customProps = JSON.parse(props);
+		let pr = "pageRanges";
+	
+		console.log(customProps[pr])
+		console.log(printerSettings["pageRanges"])
+		//printerSettings["pageRanges"] = [1]
+	
+		for (const printProperty in customProps) {
+			printerSettings[printProperty] = customProps[printProperty];
+		}
+		return printerSettings;
+	},
+	
 
 	/** Prints the messages selected in the thread pane. */
 	PrintSelectedMessages: async function (options) {
@@ -266,6 +355,7 @@ var printingtools = {
 				} else {
 					console.log("Start print call")
 					console.log("Start print win")
+					this.savePrinterSettingsFromPTNGsettings()
 					PrintUtils.startPrintWindow(messagePaneBrowser.browsingContext, { printSelectionOnly: false });
 				}
 
@@ -335,6 +425,7 @@ var printingtools = {
 				await printingtools.reformatLayout();
 
 				console.log("af reformat")
+				this.savePrinterSettingsFromPTNGsettings()
 				PrintUtils.startPrintWindow(fakeMsgPane.browsingContext);
 
 

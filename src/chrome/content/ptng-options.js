@@ -16,6 +16,25 @@ var fullPanel;
 var fromPreview;
 var gheaderList;
 var abook = false;
+var printSettings;
+const defaultPTNGprinterSettings = {
+	numCopies: 1,
+	pageRanges: [1, 1],
+	marginTop: 0.5,
+	marginBottom: 0.5,
+	marginLeft: 0.5,
+	marginRight: 0.5,
+	headerStrLeft: "",
+	headerStrCenter: "&T",
+	headerStrRight: "",
+	footerStrLeft: "&PT",
+	footerStrCenter: "",
+	footerStrRight: "&D"
+};
+
+
+
+
 
 
 function getComplexPref(pref) {
@@ -261,10 +280,10 @@ async function setPrinterList() {
 	var printerList = Cc["@mozilla.org/gfx/printerlist;1"]
 		.getService(Ci.nsIPrinterList);
 
-	// Services.console.logStringMessage("printingtools: print_printer " + outputPrinter);
+	console.log("printingtools: print_printer " + outputPrinter);
 	var printers = await printerList.printers;
 	// var printers = [];
-	var i = 0;
+	var i = 1;
 	var menuitem0 = document.createXULElement("menuitem");
 	menuitem0.setAttribute("value", "Mozilla Save to PDF");
 	menuitem0.setAttribute("label", "Save to PDF");
@@ -289,13 +308,232 @@ async function setPrinterList() {
 		i++;
 	}
 
+	if (outputPrinter === "Mozilla Save to PDF") {
+		selindex = 0;
+		// Services.console.logStringMessage("printingtools: selected: " + outputPrinter);
+	}
 	var PSSVC = Cc["@mozilla.org/gfx/printsettings-service;1"]
 		.getService(Ci.nsIPrintSettingsService);
+		
+	console.log(PSSVC)
 
-
+	
 	printerListMenu.appendChild(popup);
 	printerListMenu.selectedIndex = selindex;
 	// Services.console.logStringMessage("printingtools: printerName index: " + selindex);
+	getPrinterSettings();
+}
+
+function printerChange() {
+	console.log("chg")
+	prefs.setCharPref("print_printer", document.getElementById("OutputPrinter").value);
+	prefs.setCharPref("print_printer", "");
+	prefs.setCharPref("print_printer", document.getElementById("OutputPrinter").value);
+	console.log(document.getElementById("OutputPrinter").value)
+	getPrinterSettings();
+}
+
+function getPrinterSettings() {
+	var w = Cc["@mozilla.org/appshell/window-mediator;1"]
+	.getService(Ci.nsIWindowMediator)
+	.getMostRecentWindow("mail:3pane");
+	printSettings = w.PrintUtils.getPrintSettings();
+
+	console.log(printSettings)
+	
+	let printerName = printSettings.printerName;
+	let printerNameEsc = printerName.replace(/ /g, '_');
+	let p = `extensions.printingtoolsng.printer.${printerNameEsc}`;
+	console.log(p)
+	let t = prefs.getPrefType(`extensions.printingtoolsng.printer.${printerNameEsc}`)
+	console.log(t)
+	var props;
+	var customProps;
+
+	if(t > 0) {
+		printSettings =  setPrinterSettingsFromPTNGsettings(printSettings)
+		let cr = document.querySelector("#pages");
+		cr.value = printSettings.pageRanges;
+		console.log(printSettings)
+
+	} else {
+		initCustomPrinterOptions(printerName);
+		printSettings =  setPrinterSettingsFromPTNGsettings(printSettings)
+		
+		let cr = document.querySelector("#pages");
+		cr.value = printSettings.pageRanges;
+	}
+
+	let el = document.querySelector("#margin-top");
+	el.value = printSettings.marginTop.toFixed(2);
+	el = document.querySelector("#margin-bottom");
+	el.value = printSettings.marginBottom.toFixed(2);
+	el = document.querySelector("#margin-left");
+	el.value = printSettings.marginLeft.toFixed(2);
+	el = document.querySelector("#margin-right");
+	el.value = printSettings.marginRight.toFixed(2);
+
+	el = document.querySelector("#headerleft");
+	el.value = printSettings.headerStrLeft;
+	el = document.querySelector("#headercenter");
+	el.value = printSettings.headerStrCenter;
+	el = document.querySelector("#headerright");
+	el.value = printSettings.headerStrRight;
+
+	el = document.querySelector("#footerleft");
+	el.value = printSettings.footerStrLeft;
+	el = document.querySelector("#footercenter");
+	el.value = printSettings.footerStrCenter;
+	el = document.querySelector("#footerright");
+	el.value = printSettings.footerStrRight;
+
+
+}
+
+function toInchValue(val) {
+    if (typeof val == "string") {
+      val = parseFloat(val);
+    }
+    return val * 1;
+  }
+
+  function savePrinterSettingsFromPTNGsettings() {
+	var w = Cc["@mozilla.org/appshell/window-mediator;1"]
+	.getService(Ci.nsIWindowMediator)
+	.getMostRecentWindow("mail:3pane");
+	printSettings = w.PrintUtils.getPrintSettings();
+
+	console.log(printSettings)
+	
+	let printerName = printSettings.printerName;
+	let printerNameEsc = printerName.replace(/ /g, '_');
+	let p = `extensions.printingtoolsng.printer.${printerNameEsc}`;
+	console.log(p)
+	let t = prefs.getPrefType(`extensions.printingtoolsng.printer.${printerNameEsc}`)
+	console.log(t)
+	var props;
+	var customProps;
+
+	if(t > 0) {
+		printSettings =  setPrinterSettingsFromPTNGsettings(printSettings)
+		let cr = document.querySelector("#pages");
+		cr.value = printSettings.pageRanges;
+		console.log(printSettings)
+
+	} else {
+		initCustomPrinterOptions(printerName);
+		printSettings =  setPrinterSettingsFromPTNGsettings(printSettings)
+	}
+	var PSSVC = Cc["@mozilla.org/gfx/printsettings-service;1"]
+		.getService(Ci.nsIPrintSettingsService);
+	PSSVC.savePrintSettingsToPrefs(printSettings, true, Ci.nsIPrintSettings.kInitSaveAll)
+  }
+
+
+
+function savePrintSettings() {
+	var PSSVC = Cc["@mozilla.org/gfx/printsettings-service;1"]
+		.getService(Ci.nsIPrintSettingsService);
+
+		let ps = PSSVC.createNewPrintSettings();
+		console.log(ps.marginTop)
+		ps.marginTop = 0.4;
+		console.log(ps.marginTop)
+
+		
+		ps.printerName = document.getElementById("OutputPrinter").value;
+		PSSVC.initPrintSettingsFromPrefs(ps, true, ps.kInitSaveAll);
+		console.log(ps.marginTop)
+		ps.marginTop = 1.6;
+		console.log(ps.marginTop)
+
+	let el = document.querySelector("#margin-top");
+	let val = toInchValue(el.value);
+	printSettings.marginTop = val;
+
+	el = document.querySelector("#margin-bottom");
+	val = toInchValue(el.value);
+	printSettings.marginBottom = val;
+
+	el = document.querySelector("#margin-left");
+	printSettings.marginLeft = val;
+	el = document.querySelector("#margin-right");
+	printSettings.marginRight = val;
+
+	el = document.querySelector("#headerleft");
+	printSettings.headerStrLeft = el.value;
+	el = document.querySelector("#headercenter");
+	printSettings.headerStrCenter = el.value;
+	el = document.querySelector("#headerright");
+	printSettings.headerStrRight = el.value;
+
+	el = document.querySelector("#footerleft");
+	printSettings.footerStrLeft = el.value;
+	el = document.querySelector("#footercenter");
+	printSettings.footerStrCenter = el.value;
+	el = document.querySelector("#footerright");
+	printSettings.footerStrRight = el.value;
+
+
+	console.log(printSettings)
+	//printSettings.marginTop = "0.6";
+	//console.log(printSettings.marginTop)
+	PSSVC.savePrintSettingsToPrefs(printSettings, true, Ci.nsIPrintSettings.kInitSaveAll)
+
+	let printerName = printSettings.printerName;
+	let printerNameEsc = printerName.replace(/ /g, '_');
+	let p = `extensions.printingtoolsng.printer.${printerNameEsc}`;
+	console.log(p)
+	let props = prefs.getStringPref(`extensions.printingtoolsng.printer.${printerNameEsc}`);
+
+	var customProps = JSON.parse(props);
+
+	for (const printProperty in customProps) {
+		customProps[printProperty] = printSettings[printProperty];
+	}
+	
+	let js = JSON.stringify(customProps);
+	prefs.setStringPref(`extensions.printingtoolsng.printer.${printerNameEsc}`, js);
+}
+
+function initCustomPrinterOptions(printerName) {
+	let printerNameEsc = printerName.replace(/ /g, '_');
+	let p = `extensions.printingtoolsng.printer.${printerNameEsc}`;
+	console.log(p)
+	let t = prefs.getPrefType(`extensions.printingtoolsng.printer.${printerNameEsc}`)
+	console.log(t)
+	var props;
+
+	if(t == 0) {
+		let customProps = defaultPTNGprinterSettings;
+		let customPropsStr = JSON.stringify(customProps);
+		prefs.setStringPref(p, customPropsStr);
+		
+	}
+
+}
+
+function setPrinterSettingsFromPTNGsettings(printerSettings) {
+	let printerNameEsc = printerSettings.printerName.replace(/ /g, '_');
+	let p = `extensions.printingtoolsng.printer.${printerNameEsc}`;
+	let t = prefs.getPrefType(`extensions.printingtoolsng.printer.${printerNameEsc}`)
+
+	if (t == 0) {
+		initCustomPrinterOptions(printerSettings.printerName);
+	}
+
+	let props = prefs.getStringPref(`extensions.printingtoolsng.printer.${printerNameEsc}`);
+	var customProps = JSON.parse(props);
+	let pr = "pageRanges";
+
+	console.log(customProps[pr])
+	console.log(printerSettings["pageRanges"])
+	//printerSettings["pageRanges"] = [1]
+
+	for (const printProperty in customProps) {
+		printerSettings[printProperty] = customProps[printProperty];
+	}
+	return printerSettings;
 }
 
 function initPMDabpanel() {
@@ -394,7 +632,7 @@ function getHeaderLabel(string) {
 }
 
 function savePMDprefs() {
-	//console.debug('save options');
+	console.debug('save options');
 	
 	prefs.setCharPref("print_printer", document.getElementById("OutputPrinter").value);
 	prefs.setCharPref("print_printer", "");
@@ -502,7 +740,10 @@ function savePMDprefs() {
 	}
 
 	prefs.setCharPref("extensions.printingtoolsng.debug.options", document.getElementById("debug-options").value);
-	
+
+	savePrintSettings();
+
+	window.close();
 }
 
 function savePMDabprefs(fullpanel) {

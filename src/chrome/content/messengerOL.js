@@ -156,13 +156,26 @@ function onLoad() {
 			console.debug(subDialogWindow.document.documentElement.outerHTML);
 			let cr = subDialogWindow.document.querySelector("#custom-range");
 			let rp = subDialogWindow.document.querySelector("#range-picker");
-		
+			let mp = subDialogWindow.document.querySelector("#margins-picker");
+			let cmg = subDialogWindow.document.querySelector("#custom-margins");
+			let cm_top = subDialogWindow.document.querySelector("#custom-margin-top");
 			console.debug(rp);
 	
 			console.debug(cr);
-			rp.selectedIndex = 1;
+			rp.selectedIndex = 3;
 			cr.removeAttribute("hidden")
-			cr.value = "1"
+			cmg.removeAttribute("hidden")
+			mp.selectedIndex = 3;
+
+			let printerName = window.printingtools.prefs.getCharPref("print_printer").replace(/ /g, '_');
+			console.debug(printerName);
+			let props = window.printingtools.prefs.getStringPref(`extensions.printingtoolsng.printer.${printerName}`);
+			var customProps = JSON.parse(props);
+		
+			cr.value = customProps["pageRanges"];
+			//cm_top.value = customProps["marginTop"];
+		
+			
 
 
 			},

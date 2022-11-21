@@ -302,7 +302,7 @@
 				<vbox>
 					<hbox align="center">
 						<html:label style="padding-left: 8px; padding-right: 4px;">&defaultPrinter;</html:label>
-						<menulist id="OutputPrinter"/>
+						<menulist id="OutputPrinter" oncommand="printerChange();"/>
 					</hbox>
 					<spacer height="4px" />
 					<hbox align="center">
@@ -324,7 +324,7 @@
 					<label value="Copies: " style="width: 100px"/>
 					
 					<hbox width="200px" style="background-colorx: yellow">
-					<html:input id="copies-count" is="setting-number" data-setting-name="numCopies" min="1" max="10000" class="copy-count-input photon-number2" aria-errormessage="error-invalid-copies" required="" type="number" autocomplete="off" value="14"/>
+					<html:input id="copies-count" is="setting-number" data-setting-name="numCopies" min="1" max="10000" class="copy-count-input photon-number2" aria-errormessage="error-invalid-copies" required="" type="number" autocomplete="off" value="1"/>
 					</hbox>
 					</hbox >
 					<spacer height="10px"/>
@@ -346,12 +346,12 @@
 					<spacer height="4px"/>
 					<hbox  height="24px">
 						<label value="Top margin: " style="width: 100px"/>
-					<html:input id="margin-left" is="setting-number" data-setting-name="numCopies" min="1" max="10000" class="margin-input photon-number2" aria-errormessage="error-invalid-copies" required="" type="number" autocomplete="off" value="0.50"/>
+					<html:input id="margin-top" is="setting-number" data-setting-name="marginTop" min="1" max="10000" class="margin-input photon-number2" aria-errormessage="error-invalid-copies" required="" type="number" autocomplete="off" value="0.50"/>
 					</hbox>
 					<spacer height="4px"/>
 					<hbox  height="24px">
 						<label value="Bottom margin: " style="width: 100px"/>
-					<html:input id="margin-left" is="setting-number" data-setting-name="numCopies" min="1" max="10000" class="margin-input photon-number2" aria-errormessage="error-invalid-copies" required="" type="number" autocomplete="off" value="0.50"/>
+					<html:input id="margin-bottom" is="setting-number" data-setting-name="marginBottom" min="1" max="10000" class="margin-input photon-number2" aria-errormessage="error-invalid-copies" required="" type="number" autocomplete="off" value="0.50"/>
 					</hbox>
 					<spacer height="6px"/>
 
@@ -359,38 +359,38 @@
 					<spacer height="6px"/>
 					<hbox  >
 						<label value="Left : " style="width: 100px"/>
-						<html:input type="text" id="pages" size="15" style="heightx: 24px; margin-left: 0px" />
+						<html:input type="text" id="headerleft" size="15" style="heightx: 24px; margin-left: 0px" />
 					</hbox>
 					<spacer height="6px"/>
 
 					<hbox  >
 						<label value="Center: " style="width: 100px"/>
-						<html:input type="text" id="pages" size="15" style="heightx: 24px; margin-left: 0px" />
+						<html:input type="text" id="headercenter" size="15" style="heightx: 24px; margin-left: 0px" />
 					</hbox>
 					<spacer height="4px"/>
 
 					<hbox  >
 						<label value="Right: " style="width: 100px"/>
-						<html:input type="text" id="pages" size="15" style="heightx: 24px; margin-left: 0px" />
+						<html:input type="text" id="headerright" size="15" style="heightx: 24px; margin-left: 0px" />
 					</hbox>
 				<spacer height="6px"/>
 				<label value="Footer" style="width: 100px"/>
 					<spacer height="6px"/>
 					<hbox  >
 						<label value="Left : " style="width: 100px"/>
-						<html:input type="text" id="pages" size="15" style="heightx: 24px; margin-left: 0px" />
+						<html:input type="text" id="footerleft" size="15" style="heightx: 24px; margin-left: 0px" />
 					</hbox>
 					<spacer height="6px"/>
 
 					<hbox  >
 						<label value="Center: " style="width: 100px"/>
-						<html:input type="text" id="pages" size="15" style="heightx: 24px; margin-left: 0px" />
+						<html:input type="text" id="footercenter" size="15" style="heightx: 24px; margin-left: 0px" />
 					</hbox>
 					<spacer height="4px"/>
 
 					<hbox  >
 						<label value="Right: " style="width: 100px"/>
-						<html:input type="text" id="pages" size="15" style="heightx: 24px; margin-left: 0px" />
+						<html:input type="text" id="footerright" size="15" style="heightx: 24px; margin-left: 0px" />
 					</hbox>
 
 					
@@ -404,7 +404,7 @@
 		<hbox align="right">
 			<spacer flex="1"/>
 			<button id="localfolder.btQuitter" label="Cancel" oncommand="window.close();"/>
-			<button id="localfolder.btValider" label="Ok" oncommand=""/>
+			<button id="localfolder.btValider" label="Ok" oncommand="savePMDprefs();"/>
 		</hbox>
 	
 </window>
