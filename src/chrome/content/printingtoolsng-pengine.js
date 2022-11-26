@@ -5,9 +5,9 @@ var st = {};
 
 Services.scriptloader.loadSubScript("chrome://printingtoolsng/content/strftime.js", st);
 
-const defaultPTNGprinterSettings = {
+var defaultPTNGprinterSettings = {
 	numCopies: 1,
-	pageRanges: [1, 1],
+	pageRanges: [],
 	marginTop: 0.5,
 	marginBottom: 0.5,
 	marginLeft: 0.5,

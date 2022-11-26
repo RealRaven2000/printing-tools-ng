@@ -158,8 +158,9 @@ function onLoad() {
 			let rp = subDialogWindow.document.querySelector("#range-picker");
 			let mp = subDialogWindow.document.querySelector("#margins-picker");
 			let cmg = subDialogWindow.document.querySelector("#custom-margins");
-			let cm_top = subDialogWindow.document.querySelector("#custom-margin-top");
-			console.debug(rp);
+			let nc = subDialogWindow.document.querySelector("#copies-count");
+			
+
 	
 			console.debug(cr);
 			rp.selectedIndex = 3;
@@ -173,7 +174,7 @@ function onLoad() {
 			var customProps = JSON.parse(props);
 		
 			cr.value = customProps["pageRanges"];
-			//cm_top.value = customProps["marginTop"];
+			nc.value = customProps["numCopies"];
 		
 			
 

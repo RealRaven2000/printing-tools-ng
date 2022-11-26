@@ -19,7 +19,7 @@ var abook = false;
 var printSettings;
 const defaultPTNGprinterSettings = {
 	numCopies: 1,
-	pageRanges: [1, 1],
+	pageRanges: [],
 	marginTop: 0.5,
 	marginBottom: 0.5,
 	marginLeft: 0.5,
@@ -352,18 +352,26 @@ function getPrinterSettings() {
 
 	if(t > 0) {
 		printSettings =  setPrinterSettingsFromPTNGsettings(printSettings)
-		let cr = document.querySelector("#pages");
-		cr.value = printSettings.pageRanges;
+		
 		console.log(printSettings)
 
 	} else {
 		initCustomPrinterOptions(printerName);
 		printSettings =  setPrinterSettingsFromPTNGsettings(printSettings)
-		
-		let cr = document.querySelector("#pages");
-		cr.value = printSettings.pageRanges;
 	}
 
+	let cr = document.querySelector("#pages");
+	let pr = printSettings.pageRanges;
+	if (pr == []) {
+		cr.value = "All";
+	} else {
+		console.log(pr)
+		cr.value = pageRangesToString(pr);
+	}
+	
+	let nc = document.querySelector("#copies-count");
+	nc.value = printSettings.numCopies;
+	console.log(printSettings.numCopies)
 	let el = document.querySelector("#margin-top");
 	el.value = printSettings.marginTop.toFixed(2);
 	el = document.querySelector("#margin-bottom");
@@ -388,6 +396,64 @@ function getPrinterSettings() {
 	el.value = printSettings.footerStrRight;
 
 
+}
+
+function pageRangesToString(pageRanges) {
+	var pageRangesStr = "";
+	console.log(pageRanges)
+	console.log(pageRanges.length)
+	if (pageRanges.length == 0) {
+		return "All";
+	}
+	let totalRangeItems = pageRanges.length;
+	for (let pair = 0; pair < totalRangeItems - 1; pair += 2) {
+		let startRange = pageRanges[pair];
+		let endRange = pageRanges[pair + 1];
+		console.log(startRange + " - " + endRange)
+		if (startRange == endRange) {
+			pageRangesStr += startRange;
+		} else {
+			pageRangesStr += (startRange + "-" + endRange) 
+		}
+		if (pair < totalRangeItems - 2) {
+			pageRangesStr += ", ";
+		}
+	}
+	return pageRangesStr;
+}
+
+function setPageRangesFromString(pageRangesStr) {
+	var pageRanges = [];
+	console.log(pageRangesStr)
+	if (pageRangesStr == "All") {
+		return pageRanges;
+	}
+	let ranges = pageRangesStr.split(",");
+	ranges.forEach(range => {
+		let rangeParts = range.split("-");
+		let startRange = parseInt(rangeParts[0], 10);
+      let endRange = parseInt(
+        rangeParts.length == 2 ? rangeParts[1] : rangeParts[0],
+        10
+      );
+
+	  // If the startRange was not specified, then we infer this
+      // to be 1.
+      if (isNaN(startRange) && rangeParts[0] == "") {
+        startRange = 1;
+      }
+      // If the end range was not specified, then we infer this
+      // to be the total number of pages.
+      if (isNaN(endRange) && rangeParts[1] == "") {
+        endRange = 1000;
+      }
+	  
+	  pageRanges.push(startRange);
+	  pageRanges.push(endRange)
+
+	});
+	console.log(pageRanges);
+	return pageRanges;
 }
 
 function toInchValue(val) {
@@ -447,6 +513,10 @@ function savePrintSettings() {
 		ps.marginTop = 1.6;
 		console.log(ps.marginTop)
 
+	let nc = document.querySelector("#copies-count");
+	printSettings.numCopies = nc.value;
+	let pr = document.querySelector("#pages");
+	printSettings.pageRanges = setPageRangesFromString(pr.value)
 	let el = document.querySelector("#margin-top");
 	let val = toInchValue(el.value);
 	printSettings.marginTop = val;
@@ -526,12 +596,14 @@ function setPrinterSettingsFromPTNGsettings(printerSettings) {
 	var customProps = JSON.parse(props);
 	let pr = "pageRanges";
 
-	console.log(customProps[pr])
-	console.log(printerSettings["pageRanges"])
+	console.log(customProps)
+	console.log(printerSettings["numCopies"])
 	//printerSettings["pageRanges"] = [1]
 
 	for (const printProperty in customProps) {
+		
 		printerSettings[printProperty] = customProps[printProperty];
+		console.log(printProperty + "" + printerSettings[printProperty]);
 	}
 	return printerSettings;
 }
