@@ -360,6 +360,11 @@ function getPrinterSettings() {
 		printSettings =  setPrinterSettingsFromPTNGsettings(printSettings)
 	}
 
+	console.log(printSettings.paperSizeUnit)
+	let un = document.querySelector("#units");
+	let unitsStr = ["(inches)","(mm)"];
+	un.value = unitsStr[printSettings.paperSizeUnit];
+
 	let cr = document.querySelector("#pages");
 	let pr = printSettings.pageRanges;
 	if (pr == []) {
@@ -372,14 +377,19 @@ function getPrinterSettings() {
 	let nc = document.querySelector("#copies-count");
 	nc.value = printSettings.numCopies;
 	console.log(printSettings.numCopies)
+	let units = printSettings.paperSizeUnit;
+
 	let el = document.querySelector("#margin-top");
-	el.value = printSettings.marginTop.toFixed(2);
+	el.value = inchesToPaperUnits(printSettings.marginTop, units).toFixed(2);
 	el = document.querySelector("#margin-bottom");
-	el.value = printSettings.marginBottom.toFixed(2);
+	el.value = inchesToPaperUnits(printSettings.marginBottom, units).toFixed(2);
+	
 	el = document.querySelector("#margin-left");
-	el.value = printSettings.marginLeft.toFixed(2);
+	el.value = inchesToPaperUnits(printSettings.marginLeft, units).toFixed(2);
+	
 	el = document.querySelector("#margin-right");
-	el.value = printSettings.marginRight.toFixed(2);
+	el.value = inchesToPaperUnits(printSettings.marginRight, units).toFixed(2);
+	
 
 	el = document.querySelector("#headerleft");
 	el.value = printSettings.headerStrLeft;
@@ -463,6 +473,20 @@ function toInchValue(val) {
     return val * 1;
   }
 
+  function inchesToPaperUnits(val, units) {
+	if (units == 0) {
+		return val;
+	}
+	return val * 25.4;
+  }
+
+  function paperUnitsToInches(val, units) {
+	if (units == 0) {
+		return val;
+	}
+	return val / 25.4;
+  }
+
   function savePrinterSettingsFromPTNGsettings() {
 	var w = Cc["@mozilla.org/appshell/window-mediator;1"]
 	.getService(Ci.nsIWindowMediator)
@@ -500,8 +524,12 @@ function toInchValue(val) {
 function savePrintSettings() {
 	var PSSVC = Cc["@mozilla.org/gfx/printsettings-service;1"]
 		.getService(Ci.nsIPrintSettingsService);
-
-		let ps = PSSVC.createNewPrintSettings();
+		var ps;
+		if (PSSVC.newPrintSettings) {
+			ps = PSSVC.newPrintSettings;
+		} else {
+			ps = PSSVC.createNewPrintSettings();
+		}
 		console.log(ps.marginTop)
 		ps.marginTop = 0.4;
 		console.log(ps.marginTop)
@@ -517,17 +545,21 @@ function savePrintSettings() {
 	printSettings.numCopies = nc.value;
 	let pr = document.querySelector("#pages");
 	printSettings.pageRanges = setPageRangesFromString(pr.value)
+
+	let units = printSettings.paperSizeUnit;
 	let el = document.querySelector("#margin-top");
-	let val = toInchValue(el.value);
+	let val = paperUnitsToInches(toInchValue(el.value), units);
 	printSettings.marginTop = val;
 
 	el = document.querySelector("#margin-bottom");
-	val = toInchValue(el.value);
+	val = paperUnitsToInches(toInchValue(el.value), units);
 	printSettings.marginBottom = val;
 
 	el = document.querySelector("#margin-left");
+	val = paperUnitsToInches(toInchValue(el.value), units);
 	printSettings.marginLeft = val;
 	el = document.querySelector("#margin-right");
+	val = paperUnitsToInches(toInchValue(el.value), units);
 	printSettings.marginRight = val;
 
 	el = document.querySelector("#headerleft");

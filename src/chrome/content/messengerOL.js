@@ -160,20 +160,35 @@ function onLoad() {
 			let cmg = subDialogWindow.document.querySelector("#custom-margins");
 			let nc = subDialogWindow.document.querySelector("#copies-count");
 			
-
-	
-			console.debug(cr);
-			rp.selectedIndex = 3;
-			cr.removeAttribute("hidden")
-			cmg.removeAttribute("hidden")
-			mp.selectedIndex = 3;
-
 			let printerName = window.printingtools.prefs.getCharPref("print_printer").replace(/ /g, '_');
 			console.debug(printerName);
 			let props = window.printingtools.prefs.getStringPref(`extensions.printingtoolsng.printer.${printerName}`);
 			var customProps = JSON.parse(props);
+
+	
+			console.debug(mp);
+			console.debug(rp.options);
+			let o = [...rp.options];
+			let rangeType;
+			if (customProps.pageRanges.length == 0) {
+				rangeType = "all"
+			} else {
+				rangeType = "custom";
+				cr.removeAttribute("disabled")
+				cr.removeAttribute("hidden")
+			}
+			console.log(rangeType)
+			rp.selectedIndex = o.findIndex(el => el.value == rangeType);
+
+			
+			
+			cmg.removeAttribute("hidden")
+			mp.selectedIndex = 3;
+
+			
 		
 			cr.value = customProps["pageRanges"];
+			
 			nc.value = customProps["numCopies"];
 		
 			
