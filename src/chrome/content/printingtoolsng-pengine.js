@@ -200,21 +200,27 @@ var printingtools = {
 
 		printingtools.current = 0;
 		printingtools.num = gFolderDisplay.selectedCount;
+		var url = await window.ptngAddon.notifyTools.notifyBackground({ command: "getCurrentURL" });
+		var activeTab = await window.ptngAddon.notifyTools.notifyBackground({ command: "getActiveTab" });
 
-		//console.log(gMessageDisplay.visible)
-		//console.log(gFolderDisplay.selectedMessage)
-		//console.log(gMessageDisplay.displayedMessage)
+		console.log(activeTab)
+		console.log(decodeURIComponent(activeTab.url).replace(/%40/g, "@"))
+
+		console.log(gMessageDisplay.visible)
+		console.log(gFolderDisplay.selectedMessage)
+		console.log(gMessageDisplay.displayedMessage)
 
 		//if (gFolderDisplay.selectedCount == 1 && options.printSilent == false) {
-			if (gFolderDisplay.selectedCount == 1 ) {
+			if (gFolderDisplay.selectedCount == 1 || !activeTab.MailTab) {
 			if (1 &&
 				gMessageDisplay.visible &&
-				gFolderDisplay.selectedMessage == gMessageDisplay.displayedMessage
+				gFolderDisplay.selectedMessage == gMessageDisplay.displayedMessage &&
+				!url.startsWith("chrome://conversations")
 
 			) {
 
 
-				//console.log("Use existing print hidden pane")
+				console.log("Use existing print hidden pane")
 
 				let messagePaneBrowser = document.getElementById("messagepane");
 
@@ -365,7 +371,17 @@ var printingtools = {
 
 
 				console.log("Use created browser")
-				let uri = gFolderDisplay.selectedMessageUris[0];
+
+				var uri;
+				if (activeTab.mailTab) {
+					uri = gFolderDisplay.selectedMessageUris[0];
+				} else {
+					let urls = decodeURIComponent(activeTab.url).replace(/%40/g, "@");
+					uri = urls.split("urls=")[1].split(",")[0];
+					console.log(uri)
+					printingtools.selectedMessageUris = [uri];
+					printingtools.msgUris = [uri];
+				}
 
 				console.log("Msg URI: " + uri)
 				if (!uri) {
@@ -469,22 +485,24 @@ var printingtools = {
 		printSettings.isInitializedFromPrinter = true;
 		printSettings.isInitializedFromPrefs = true;
 		
-		printSettings.printerName = PrintUtils.SAVE_TO_PDF_PRINTER;
-		printSettings.printSilent = false;
-        printSettings.outputFormat = Ci.nsIPrintSettings.kOutputFormatPDF;
+		//printSettings.printerName = PrintUtils.SAVE_TO_PDF_PRINTER;
+		printSettings.printSilent = true;
+        //printSettings.outputFormat = Ci.nsIPrintSettings.kOutputFormatPDF;
 
-		printSettings.pageRanges = [1, 1];
-
+		//printSettings.pageRanges = [1, 1];
+		var	res = await this.openFileDialog(Ci.nsIFilePicker.modeGetFolder, "Select folder", null, Ci.nsIFilePicker.filterAll);
+		console.log(res)
 		for (let uri of printingtools.msgUris) {
 			let messageService = messenger.messageServiceFromURI(uri);
 			let aMsgHdr = messageService.messageURIToMsgHdr(uri);
-			let filePath = "C:\\Dev\\ptest\\"
+			let filePath = res.file;
 			//filePath = "/home"
 			let fileName = aMsgHdr.mime2DecodedSubject + ".pdf";
 			console.log(fileName)
+			console.log(PathUtils.join(filePath, fileName));
 			printSettings.toFileName = PathUtils.join(filePath, fileName);
 
-			printSettings.pageRanges = [1, 2];
+			//printSettings.pageRanges = [1, 2];
 
 			console.log(printSettings)
 			if (!PrintUtils.printBrowser) {
@@ -587,7 +605,7 @@ var printingtools = {
 
 		// only process mail types else use TB print #119
 		let url = await window.ptngAddon.notifyTools.notifyBackground({ command: "getCurrentURL" });
-		//console.log(url)
+		console.log(url)
 		let suri = gFolderDisplay.selectedMessageUris;
 		console.log(suri)
 
@@ -595,8 +613,12 @@ var printingtools = {
 
 		if ((url == "chrome://messenger/content/multimessageview.xhtml" || url.startsWith("about:blank")) && suri) {
 			mailType = true;
+		} else if (suri && suri.length && url.startsWith("chrome://conversations")) {
+			mailType = true;
+	
 		} else if ((url.startsWith("imap") ||
 			url.startsWith("mailbox") ||
+			url.startsWith("chrome://conversations") ||
 			url.startsWith("unknown") ||
 			url.startsWith("file")) &&
 			!url.includes("&type=")) {
@@ -606,6 +628,7 @@ var printingtools = {
 		}
 
 		if (!mailType) {
+			console.log("PTNG: non mail type")
 			goDoCommand("cmd_print");
 			return;
 		}
@@ -2413,6 +2436,40 @@ var printingtools = {
 		// console.debug(url);
 		return url;
 	},
+
+	
+openFileDialog: async function(mode, title, initialDir, filter) {
+	let fp = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
+	fp.init(window, title, mode);
+	fp.appendFilters(filter);
+	if (initialDir) {
+		fp.displayDirectory = nsiFileFromPath(initialDir);
+	}
+	let res = await new Promise(resolve => {
+		fp.open(resolve);
+	});
+	if (res !== Ci.nsIFilePicker.returnOK) {
+		return;
+	}
+
+	console.log(fp.displayDirectory)
+	console.log(fp.file)
+	var files = fp.files;
+	var paths = [];
+	while (files.hasMoreElements()) {
+		var arg = files.getNext().QueryInterface(Ci.nsIFile);
+		paths.push(arg.path);
+		console.log(arg.path)
+	}
+	let resultObj = {};
+	resultObj.result = 0;
+	resultObj.filesArray = paths;
+	if (mode === Ci.nsIFilePicker.modeGetFolder) {
+		resultObj.file = fp.file.path;
+	}
+
+	return resultObj;
+},
 
 	shutdown: function () {
 		if (document.getElementById("fp")) {

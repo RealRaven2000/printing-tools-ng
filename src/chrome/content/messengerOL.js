@@ -153,7 +153,7 @@ function onLoad() {
 			console.log(window.printingtools);
 			// setTimeout(subDialogWindow.printingtools.printT, 9000);
 
-			console.debug(subDialogWindow.document.documentElement.outerHTML);
+			//console.debug(subDialogWindow.document.documentElement.outerHTML);
 			let cr = subDialogWindow.document.querySelector("#custom-range");
 			let rp = subDialogWindow.document.querySelector("#range-picker");
 			let mp = subDialogWindow.document.querySelector("#margins-picker");
