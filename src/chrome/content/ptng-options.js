@@ -439,7 +439,8 @@ function setPageRangesFromString(pageRangesStr) {
 		return pageRanges;
 	}
 	let ranges = pageRangesStr.split(",");
-	ranges.forEach(range => {
+	
+	for (let range of ranges) {
 		let rangeParts = range.split("-");
 		let startRange = parseInt(rangeParts[0], 10);
       let endRange = parseInt(
@@ -447,6 +448,12 @@ function setPageRangesFromString(pageRangesStr) {
         10
       );
 
+	  console.log(startRange)
+	  console.log(endRange)
+
+	  if (isNaN(startRange) &&  isNaN(endRange)) {
+        continue;
+      }
 	  // If the startRange was not specified, then we infer this
       // to be 1.
       if (isNaN(startRange) && rangeParts[0] == "") {
@@ -461,7 +468,7 @@ function setPageRangesFromString(pageRangesStr) {
 	  pageRanges.push(startRange);
 	  pageRanges.push(endRange)
 
-	});
+	}
 	console.log(pageRanges);
 	return pageRanges;
 }
@@ -481,6 +488,9 @@ function toInchValue(val) {
   }
 
   function paperUnitsToInches(val, units) {
+	if (isNaN(val) || val < 0 || val > 2000) {
+		return undefined;
+	}
 	if (units == 0) {
 		return val;
 	}
@@ -541,25 +551,50 @@ function savePrintSettings() {
 		ps.marginTop = 1.6;
 		console.log(ps.marginTop)
 
-	let nc = document.querySelector("#copies-count");
-	printSettings.numCopies = nc.value;
+	let nc = Number(document.querySelector("#copies-count").value);
+	console.log(nc)
+	if (nc < 1 || nc > 1000) {
+		nc = 1;
+		alert("Copies out of range: set to  1");
+	}
+	printSettings.numCopies = nc;
 	let pr = document.querySelector("#pages");
+	if (pr.value == "") {
+		pr.value = "All";
+		alert("Empty page range set to All");
+	}
 	printSettings.pageRanges = setPageRangesFromString(pr.value)
 
 	let units = printSettings.paperSizeUnit;
 	let el = document.querySelector("#margin-top");
 	let val = paperUnitsToInches(toInchValue(el.value), units);
+	if (val == undefined) {
+		val = 0.5;
+		alert("Margin out of range: set to  0.5");
+	}
 	printSettings.marginTop = val;
 
 	el = document.querySelector("#margin-bottom");
 	val = paperUnitsToInches(toInchValue(el.value), units);
+	if (val == undefined) {
+		val = 0.5;
+		alert("Margin out of range: set to  0.5");
+	}
 	printSettings.marginBottom = val;
 
 	el = document.querySelector("#margin-left");
 	val = paperUnitsToInches(toInchValue(el.value), units);
+	if (val == undefined) {
+		val = 0.5;
+		alert("Margin out of range: set to  0.5");
+	}
 	printSettings.marginLeft = val;
 	el = document.querySelector("#margin-right");
 	val = paperUnitsToInches(toInchValue(el.value), units);
+	if (val == undefined) {
+		val = 0.5;
+		alert("Margin out of range: set to  0.5");
+	}
 	printSettings.marginRight = val;
 
 	el = document.querySelector("#headerleft");

@@ -211,7 +211,7 @@ var printingtools = {
 		console.log(gMessageDisplay.displayedMessage)
 
 		//if (gFolderDisplay.selectedCount == 1 && options.printSilent == false) {
-			if (gFolderDisplay.selectedCount == 1 || !activeTab.MailTab) {
+			if (gFolderDisplay.selectedCount == 1 || !activeTab.mailTab) {
 			if (1 &&
 				gMessageDisplay.visible &&
 				gFolderDisplay.selectedMessage == gMessageDisplay.displayedMessage &&
@@ -487,17 +487,25 @@ var printingtools = {
 		
 		//printSettings.printerName = PrintUtils.SAVE_TO_PDF_PRINTER;
 		printSettings.printSilent = true;
-        //printSettings.outputFormat = Ci.nsIPrintSettings.kOutputFormatPDF;
+        printSettings.outputFormat = Ci.nsIPrintSettings.kOutputFormatPDF;
 
 		//printSettings.pageRanges = [1, 1];
 		var	res = await this.openFileDialog(Ci.nsIFilePicker.modeGetFolder, "Select folder", null, Ci.nsIFilePicker.filterAll);
 		console.log(res)
-		for (let uri of printingtools.msgUris) {
+		console.log(printingtools.msgUris.length)
+		var fileName;
+		//for (let uri of printingtools.msgUris) {
+		for(var i = 0; i < printingtools.msgUris.length; i++) {
+			uri = printingtools.msgUris[i];
+			console.log(uri)
+
+			
 			let messageService = messenger.messageServiceFromURI(uri);
 			let aMsgHdr = messageService.messageURIToMsgHdr(uri);
+			console.log(aMsgHdr)
 			let filePath = res.file;
 			//filePath = "/home"
-			let fileName = aMsgHdr.mime2DecodedSubject + ".pdf";
+			fileName = aMsgHdr.mime2DecodedSubject + ".pdf";
 			console.log(fileName)
 			console.log(PathUtils.join(filePath, fileName));
 			printSettings.toFileName = PathUtils.join(filePath, fileName);
@@ -511,7 +519,7 @@ var printingtools = {
 				messagePaneBrowser.browsingContext.print(printSettings);
 			} else {
 				console.log("use pb print")
-				await PrintUtils.loadPrintBrowser("chrome://printingtoolsng/content/test.html");
+				//await PrintUtils.loadPrintBrowser("chrome://printingtoolsng/content/test.html");
 				await PrintUtils.loadPrintBrowser(messageService.getUrlForUri(uri).spec);
 
 				printingtools.previewDoc = PrintUtils.printBrowser.contentDocument
@@ -520,7 +528,10 @@ var printingtools = {
 				
 				await PrintUtils.printBrowser.browsingContext.print(printSettings);
 			}
+			
+			console.log(fileName)
 		}
+		console.log("end")
 	},
 
 
