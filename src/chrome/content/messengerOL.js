@@ -187,7 +187,7 @@ function onLoad() {
 
 			
 		
-			cr.value = customProps["pageRanges"];
+			cr.value = pageRangesToString(customProps["pageRanges"]);
 			
 			nc.value = customProps["numCopies"];
 		
@@ -199,6 +199,32 @@ function onLoad() {
 
 	Services.obs.addObserver(window.printingtoolsng.printObserver, "subdialog-loaded");
 
+}
+
+
+function pageRangesToString(pageRanges) {
+	var pageRangesStr = "";
+	console.log(pageRanges)
+	console.log(pageRanges.length)
+	if (pageRanges.length == 0) {
+		return [];
+	}
+	let totalRangeItems = pageRanges.length;
+	for (let pair = 0; pair < totalRangeItems - 1; pair += 2) {
+		let startRange = pageRanges[pair];
+		let endRange = pageRanges[pair + 1];
+		console.log(startRange + " - " + endRange)
+		if (startRange == endRange) {
+			pageRangesStr += startRange;
+		} else {
+			pageRangesStr += (startRange + "-" + endRange)
+			console.log(pageRangesStr) 
+		}
+		if (pair < totalRangeItems - 2) {
+			pageRangesStr += ", ";
+		}
+	}
+	return pageRangesStr;
 }
 
 // -- Define listeners for messages from the background script.

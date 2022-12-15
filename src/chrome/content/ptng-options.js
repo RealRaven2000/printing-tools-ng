@@ -258,11 +258,46 @@ async function  initPMDpanel() {
 	gheaderList.controller.selectRowByDataId('1');
 
 	// Services.console.logStringMessage("printingtools: call printer setup");
+	
+	let cr = document.querySelector("#pages");
+	cr.addEventListener("keypress", handlePageRangesKeypress);
+	cr.addEventListener("input", pageRangesValidation);
+	let nc = document.querySelector("#copies-count");
+	nc.addEventListener("keypress", handleCopiesKeypress);
+	nc.addEventListener("input", copiesValidation);
+
+	let margin = document.querySelector("#margin-top");
+	margin.addEventListener("keypress", handleMarginsKeypress);
+	margin.addEventListener("input", handleMarginsValidation);
+	margin = document.querySelector("#margin-bottom");
+	margin.addEventListener("keypress", handleMarginsKeypress);
+	margin.addEventListener("input", handleMarginsValidation);
+	margin = document.querySelector("#margin-left");
+	margin.addEventListener("keypress", handleMarginsKeypress);
+	margin.addEventListener("input", handleMarginsValidation);
+	margin = document.querySelector("#margin-right");
+	margin.addEventListener("keypress", handleMarginsKeypress);
+	margin.addEventListener("input", handleMarginsValidation);
+
 	setPrinterList();
 
 	document.getElementById("debug-options").value = prefs.getCharPref("extensions.printingtoolsng.debug.options");
 
 	document.getElementById("useCcBccAlways").focus;
+}
+
+function pageRangeToggle(pageRangeRG) {
+	console.log("toggle ", pageRangeRG.selectedIndex)
+	let cr = document.querySelector("#pages");
+	if (pageRangeRG.selectedIndex == 0) {
+		
+		
+		cr.setAttribute("disabled", "true");
+		cr.value = "1";
+		console.log(cr)
+	} else {
+		cr.removeAttribute("disabled");
+	}
 }
 
 async function setPrinterList() {
@@ -333,13 +368,154 @@ function printerChange() {
 	getPrinterSettings();
 }
 
+function handleCopiesKeypress(e) {
+	console.log(e)
+	let char = String.fromCharCode(e.charCode);
+    let acceptedChar = char.match(/^[0-9]$/);
+    if (!acceptedChar && !char.match("\x00") && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+    }
+	//copiesValidation();
+}
+
+function copiesValidation() {
+	let nc = document.querySelector("#copies-count");
+	let nce = document.querySelector("#copies-count-error");
+	console.log("chk v", nc.validity.valueMissing)
+	let v = nc.validity;
+	console.log(v)
+	if (nc.validity.valueMissing) {
+		console.log("v m")
+		//nc.setCustomValidity("Value Required");
+		//nc.reportValidity();
+		nce.textContent = "Copies value required"
+		let l = nce.textContent.length * 0.50 + "em";
+		nce.style.width = l
+		nce.className = "error active";
+		enableOKbutton(false);
+	} else {
+		nce.className = "error";
+		enableOKbutton(true);
+	}
+}
+function handlePageRangesKeypress(e) {
+	console.log(e)
+	let char = String.fromCharCode(e.charCode);
+    let acceptedChar = char.match(/^[0-9,-]$/);
+    if (!acceptedChar && !char.match("\x00") && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+	  //let cr = document.querySelector("#pages");
+	  //cr.setCustomValidity("invalid");
+    }
+}
+
+function pageRangesValidation(e) {
+	let pr = document.querySelector("#pages");
+	let pre = document.querySelector("#page-ranges-error");
+	console.log("chk v", pr.validity.valueMissing)
+	let v = pr.validity;
+	console.log(v)
+	if (pr.validity.valueMissing) {
+		console.log("v m")
+		//nc.setCustomValidity("Value Required");
+		//nc.reportValidity();
+		pre.textContent = "Page Ranges value required"
+		let l = pre.textContent.length * 0.50 + "em";
+		pre.style.width = l
+		pre.className = "error active";
+		enableOKbutton(false);
+	} else if (pageRangesStringValidation(pr.value)) {
+		if (pageRangesStringValidation(pr.value) == 1) {
+		pre.textContent = "Page Ranges value cannot be zero"
+		} else {
+			pre.textContent = "Page Range end must be greater than start"
+		}
+		let l = pre.textContent.length * 0.50 + "em";
+		pre.style.width = "100%"
+		pre.className = "error active";
+		enableOKbutton(false);
+	} else {
+		pre.className = "error";
+		enableOKbutton(true);
+	}
+}
+
+function handleMarginsKeypress(e) {
+	console.log(e)
+	let char = String.fromCharCode(e.charCode);
+    let acceptedChar = char.match(/^[0-9]$/);
+    if (!acceptedChar && !char.match("\x00") && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+    }
+	//copiesValidation();
+}
+
+function handleMarginsValidation(e) {
+	console.log(e)
+	let margin = e.target;
+	
+	if (margin.validity.valueMissing) {
+		enableOKbutton(false);
+	} else {
+		enableOKbutton(true);
+	}
+}
+
+function enableOKbutton(enable) {
+	let okButton = document.getElementById("okbutton");
+	if (enable) {
+
+	}
+	okButton.disabled = !enable;
+}
+function pageRangesStringValidation(pageRangesStr) {
+	
+	let ranges = pageRangesStr.split(",");
+	
+	for (let range of ranges) {
+		let rangeParts = range.split("-");
+		let startRange = parseInt(rangeParts[0], 10);
+      let endRange = parseInt(
+        rangeParts.length == 2 ? rangeParts[1] : rangeParts[0],
+        10
+      );
+
+	  console.log(startRange)
+	  console.log(endRange)
+
+	  if (startRange == 0 || endRange == 0) {
+		console.log("zero")
+        return 1;
+      }
+	  // If the startRange was not specified, then we infer this
+      // to be 1.
+      if (isNaN(startRange) && rangeParts[0] == "") {
+        startRange = 1;
+      }
+      // If the end range was not specified, then we infer this
+      // to be the total number of pages.
+      if (isNaN(endRange) && rangeParts[1] == "") {
+        endRange = 1000;
+      }
+	  
+	  if (endRange < startRange) {
+		return 2;
+	  }
+
+
+	}
+	
+	return 0;
+}
+
+
 function getPrinterSettings() {
 	var w = Cc["@mozilla.org/appshell/window-mediator;1"]
 	.getService(Ci.nsIWindowMediator)
 	.getMostRecentWindow("mail:3pane");
 	printSettings = w.PrintUtils.getPrintSettings();
 
-	console.log(printSettings)
+	console.log("set print settings ")
 	
 	let printerName = printSettings.printerName;
 	let printerNameEsc = printerName.replace(/ /g, '_');
@@ -365,12 +541,20 @@ function getPrinterSettings() {
 	let unitsStr = ["(inches)","(mm)"];
 	un.value = unitsStr[printSettings.paperSizeUnit];
 
+	let prRG = document.querySelector("#pageRangesRG");
 	let cr = document.querySelector("#pages");
 	let pr = printSettings.pageRanges;
-	if (pr == []) {
-		cr.value = "All";
+
+	if (pr.length == 0) {
+		console.log(pr)
+		prRG.selectedIndex = 0;
+		cr.setAttribute("disabled", "true");
+		cr.value = "1";
+		console.log(cr)
 	} else {
 		console.log(pr)
+		prRG.selectedIndex = 1;
+		cr.removeAttribute("disabled");
 		cr.value = pageRangesToString(pr);
 	}
 	
@@ -413,7 +597,7 @@ function pageRangesToString(pageRanges) {
 	console.log(pageRanges)
 	console.log(pageRanges.length)
 	if (pageRanges.length == 0) {
-		return "All";
+		return [];
 	}
 	let totalRangeItems = pageRanges.length;
 	for (let pair = 0; pair < totalRangeItems - 1; pair += 2) {
@@ -423,7 +607,8 @@ function pageRangesToString(pageRanges) {
 		if (startRange == endRange) {
 			pageRangesStr += startRange;
 		} else {
-			pageRangesStr += (startRange + "-" + endRange) 
+			pageRangesStr += (startRange + "-" + endRange)
+			console.log(pageRangesStr) 
 		}
 		if (pair < totalRangeItems - 2) {
 			pageRangesStr += ", ";
@@ -432,10 +617,11 @@ function pageRangesToString(pageRanges) {
 	return pageRangesStr;
 }
 
+
 function setPageRangesFromString(pageRangesStr) {
 	var pageRanges = [];
 	console.log(pageRangesStr)
-	if (pageRangesStr == "All") {
+	if (pageRangesStr == "") {
 		return pageRanges;
 	}
 	let ranges = pageRangesStr.split(",");
@@ -465,6 +651,13 @@ function setPageRangesFromString(pageRangesStr) {
         endRange = 1000;
       }
 	  
+	  if (endRange < startRange) {
+		continue;
+	  }
+
+	  if (startRange == 0 || endRange == 0) {
+		continue;
+	  }
 	  pageRanges.push(startRange);
 	  pageRanges.push(endRange)
 
@@ -540,10 +733,6 @@ function savePrintSettings() {
 		} else {
 			ps = PSSVC.createNewPrintSettings();
 		}
-		console.log(ps.marginTop)
-		ps.marginTop = 0.4;
-		console.log(ps.marginTop)
-
 		
 		ps.printerName = document.getElementById("OutputPrinter").value;
 		PSSVC.initPrintSettingsFromPrefs(ps, true, ps.kInitSaveAll);
@@ -558,12 +747,17 @@ function savePrintSettings() {
 		alert("Copies out of range: set to  1");
 	}
 	printSettings.numCopies = nc;
+
+	let prRG = document.querySelector("#pageRangesRG");
 	let pr = document.querySelector("#pages");
-	if (pr.value == "") {
-		pr.value = "All";
-		alert("Empty page range set to All");
-	}
-	printSettings.pageRanges = setPageRangesFromString(pr.value)
+
+	if (prRG.selectedIndex == 0) {
+		printSettings.pageRanges = [];
+	} else if (pr.value == "") {
+			alert("Empty page range set to All");
+		} else {
+			printSettings.pageRanges = setPageRangesFromString(pr.value)
+		}
 
 	let units = printSettings.paperSizeUnit;
 	let el = document.querySelector("#margin-top");

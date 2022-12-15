@@ -488,6 +488,7 @@ var printingtools = {
 		//printSettings.printerName = PrintUtils.SAVE_TO_PDF_PRINTER;
 		printSettings.printSilent = true;
         printSettings.outputFormat = Ci.nsIPrintSettings.kOutputFormatPDF;
+		this.setPrinterSettingsFromPTNGsettings(printSettings)
 
 		//printSettings.pageRanges = [1, 1];
 		var	res = await this.openFileDialog(Ci.nsIFilePicker.modeGetFolder, "Select folder", null, Ci.nsIFilePicker.filterAll);
@@ -509,10 +510,10 @@ var printingtools = {
 			console.log(fileName)
 			console.log(PathUtils.join(filePath, fileName));
 			printSettings.toFileName = PathUtils.join(filePath, fileName);
-
+			console.log("tofilename ", printSettings.toFileName)
 			//printSettings.pageRanges = [1, 2];
 
-			console.log(printSettings)
+			console.log("final ", printSettings)
 			if (!PrintUtils.printBrowser) {
 				console.log("no p brows")
 				let messagePaneBrowser = document.getElementById("messagepane");

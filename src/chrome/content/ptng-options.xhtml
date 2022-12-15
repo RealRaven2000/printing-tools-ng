@@ -332,21 +332,41 @@
 						<label value="Page Options" style="font-weight: 700; width: 100px"/>
 						<spacer height="4px"/>
 						<hbox align="center" height="24px">
+						
 							<label value="Copies : " style="width: 120px"/>
-							<hbox width="300px" style="background-colorx: yellow">
+							
+							<hbox flex="0" width="300px" style="background-colorX: yellow">
+								<vbox>
+								<html:div id="parent">
 								<html:input id="copies-count" is="setting-number" 
 						data-setting-name="numCopies" min="1" max="10000" 
 						class="copy-count-input photon-number2" 
 						aria-errormessage="error-invalid-copies" required="" 
 						type="number" autocomplete="off" value="1"/>
+						<html:div id="copies-count-error" class="error">Error</html:div>
+						</html:div>
+						</vbox>
 							</hbox>
 						</hbox>
 						<spacer height="10px"/>
-						<hbox align="center">
-							<label value="Page Ranges : " style="width: 120px"/>
-							<html:input type="text" id="pages" size="15" 
-						style="heightx: 24px; margin-left: 0px" />
-						</hbox>
+						<hbox>
+						<label value="Page Ranges : " style="width: 120px"/>
+						<radiogroup id="pageRangesRG" orient="horizontal" oncommand="pageRangeToggle(this);">
+						<radio label="All" />
+						
+						
+							<radio label="Custom" />
+
+							<html:div id="page-ranges-error-parent">
+							<html:input type="text" id="pages" size="15" required="" style="heightx: 24px; margin-left: 0px" />
+							<html:div id="page-ranges-error" class="error">Error</html:div>
+						</html:div>
+					</radiogroup>
+						
+					</hbox>
+
+						
+
 						<spacer height="10px"/>
 						<vbox  >
 							<hbox>
@@ -359,7 +379,7 @@
 								<label value="Top " style="width: 30px"/>
 								<hbox width="80px">
 									<html:input id="margin-top" is="setting-number" 
-						data-setting-name="marginTop" min="1" max="10000" 
+						data-setting-name="marginTop" min="0" max="10000" step="0.001"
 						class="margin-input photon-number2" 
 						aria-errormessage="error-invalid-copies" required="" 
 						type="number" autocomplete="off" value="0.50"/>
@@ -370,7 +390,7 @@
 								</hbox>
 								<hbox width="80px">
 									<html:input id="margin-bottom" is="setting-number" 
-						data-setting-name="marginBottom" min="1" max="10000" 
+						data-setting-name="marginBottom" min="0" max="10000" step="0.001"
 						class="margin-input photon-number2" 
 						aria-errormessage="error-invalid-copies" required="" 
 						type="number" autocomplete="off" value="0.50"/>
@@ -382,7 +402,7 @@
 								<label value="Left " style="width: 30px"/>
 								<hbox width="80px">
 									<html:input id="margin-left" is="setting-number" 
-						data-setting-name="numCopies" min="1" max="10000" 
+						data-setting-name="numCopies" min="0" max="10000" step="0.001"
 						class="margin-input photon-number2" 
 						aria-errormessage="error-invalid-copies" required="" 
 						type="number" autocomplete="off" value="0.50"/>
@@ -393,7 +413,7 @@
 								</hbox>
 								<hbox width="80px">
 									<html:input id="margin-right" is="setting-number" 
-						data-setting-name="numCopies" min="1" max="10000" 
+						data-setting-name="numCopies" min="0" max="10000" step="0.001"
 						class="margin-input photon-number2" 
 						aria-errormessage="error-invalid-copies" required="" 
 						type="number" autocomplete="off" value="0.50"/>
@@ -452,7 +472,7 @@
 	<vbox height="8px"></vbox>
 	<hbox align="right">
 		<spacer flex="1"/>
-		<button id="localfolder.btValider" label="OK" oncommand="savePMDprefs();"/>
+		<button id="okbutton" label="OK" oncommand="savePMDprefs();"/>
 		<button id="localfolder.btQuitter" label="Cancel" oncommand="window.close();"/>
 	</hbox>
 </window>
