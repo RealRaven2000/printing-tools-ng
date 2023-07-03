@@ -50,8 +50,8 @@
 <!ENTITY alignHeaders.label "Kopfzeilen ausrichten">
 <!ENTITY multipleCards.label "Alle ausgewählten Kontakte drucken">
 <!ENTITY maxPreLen "Maximallänge an die Zeilen der Textabschnitte anpassen:">
-<!ENTITY resizeImgs.label "Ändern Sie die Größe großer Bilder">
-<!ENTITY showButton.label "Zeigen Sie die Optionsschaltfläche im Vorschaufenster an">
+<!ENTITY resizeImgs.label "Große Bilder anpassen">
+<!ENTITY showButton.label "Optionsschaltfläche im Vorschaufenster anzeigen">
 <!ENTITY addRdate.label "Empfangsdatum hinzufügen">
 <!ENTITY defaultPrinter "Standard Drucker">
 <!ENTITY attachmentsPerLine "Anhänge pro Zeile:">
@@ -59,9 +59,9 @@
 <!ENTITY showhide "Ein- oder Ausblenden">
 <!ENTITY useHeadersBkColor "Hintergrundfarbe der Kopfzeilen:">
 <!ENTITY borderStyle "Randstil:">
-<!ENTITY colorsNote "Hinweis: &quot;Drucken&quot; >> &quot;Mehr Einstellungen&quot; >> Einstellungen: &quot;Hintergrund drucken&quot; muss aktiviert sein">
+<!ENTITY colorsNote "Hinweis: &quot;Drucken&quot; » &quot;Mehr Einstellungen&quot; » Einstellungen: &quot;Hintergrund drucken&quot; muss aktiviert sein">
 <!ENTITY showSignatureVCFfiles "Signatur- und VCF-Dateien anzeigen">
-<!ENTITY useCcBccAlways "Verwenden Sie für alle Gebietsschemas die Abkürzungen &#39;Cc&#39; und &#39;Bcc&#39;">
+<!ENTITY useCcBccAlways "Die Abkürzungen &#39;Cc&#39; und &#39;Bcc&#39; für alle Gebietsschemas verwenden">
 <!ENTITY HideInlineAttList "Inline-Anhangsliste ausblenden">
 <!ENTITY print.label "Drucken">
 <!ENTITY printPreview.label "Druckvorschau">
@@ -84,7 +84,7 @@
 <!ENTITY prefix "Präfix">
 <!ENTITY suffix "Suffix">
 <!ENTITY latinize "Betreff und Namen latinisieren">
-<!ENTITY remove_emojis "Entfernen Sie Unicode-Emojis und -Symbole">
+<!ENTITY remove_emojis "Unicode-Emojis und -Symbole entfernen">
 <!ENTITY filter_characters "Zeichen filtern">
 <!ENTITY filename_format "Dateinamenformat">
 <!ENTITY page_options "Seitenoptionen">
@@ -104,5 +104,5 @@
 <!ENTITY Help "Hilfe">
 <!ENTITY Scale "Skalierung">
 <!ENTITY fitToWidth "An Seitenbreite anpassen">
-<!ENTITY persistent "Hartnäckig">
+<!ENTITY persistent "Dauerhaft">
 <!ENTITY contextHelp.accesskey "H">
